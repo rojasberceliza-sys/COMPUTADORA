@@ -1,0 +1,430 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Aprende Computación</title>
+
+<style>
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: Arial, sans-serif;
+  background: #eef2ff;
+  color: #1e293b;
+}
+
+.app {
+  max-width: 430px;
+  min-height: 100vh;
+  margin: auto;
+  background: white;
+  padding-bottom: 85px;
+}
+
+header {
+  background: linear-gradient(135deg,#4338ca,#2563eb);
+  color: white;
+  padding: 25px 20px;
+  border-radius: 0 0 25px 25px;
+}
+
+header h1 {
+  font-size: 25px;
+  margin-bottom: 8px;
+}
+
+header p {
+  font-size: 14px;
+  opacity: .9;
+}
+
+.contenido {
+  padding: 20px;
+}
+
+.titulo {
+  font-size: 19px;
+  margin: 20px 0 15px;
+}
+
+.progreso {
+  background: #e2e8f0;
+  height: 10px;
+  border-radius: 20px;
+  margin-top: 12px;
+  overflow: hidden;
+}
+
+.barra {
+  background: #22c55e;
+  width: 0%;
+  height: 100%;
+  transition: .3s;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.tarjeta {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 16px;
+  padding: 18px 10px;
+  text-align: center;
+  cursor: pointer;
+  transition: .2s;
+}
+
+.tarjeta:active {
+  transform: scale(.96);
+}
+
+.emoji {
+  font-size: 40px;
+  margin-bottom: 10px;
+}
+
+.tarjeta h3 {
+  font-size: 15px;
+  margin-bottom: 5px;
+}
+
+.tarjeta p {
+  font-size: 12px;
+  color: #64748b;
+}
+
+button {
+  border: none;
+  background: #4338ca;
+  color: white;
+  padding: 13px;
+  border-radius: 12px;
+  width: 100%;
+  font-size: 15px;
+  font-weight: bold;
+  cursor: pointer;
+  margin-top: 12px;
+}
+
+button:hover {
+  background: #3730a3;
+}
+
+#detalle {
+  display: none;
+  text-align: center;
+  padding: 20px;
+  background: #f8fafc;
+  border-radius: 18px;
+  margin-top: 20px;
+}
+
+#detalle .emoji {
+  font-size: 75px;
+}
+
+#detalle p {
+  margin-top: 12px;
+  line-height: 1.5;
+}
+
+.opcion {
+  background: #eff6ff;
+  color: #1e40af;
+  border: 1px solid #bfdbfe;
+}
+
+#quiz {
+  display: none;
+  margin-top: 20px;
+  background: #f8fafc;
+  padding: 20px;
+  border-radius: 18px;
+}
+
+nav {
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  max-width: 430px;
+  background: white;
+  display: flex;
+  justify-content: space-around;
+  padding: 13px 5px;
+  box-shadow: 0 -3px 15px #00000012;
+}
+
+nav button {
+  background: white;
+  color: #475569;
+  width: 32%;
+  font-size: 12px;
+  margin: 0;
+  padding: 8px 2px;
+}
+
+nav button:hover {
+  background: #eef2ff;
+  color: #4338ca;
+}
+</style>
+</head>
+
+<body>
+
+<div class="app">
+
+<header>
+  <h1>💻 Aprende Computación</h1>
+  <p>¡Descubre las partes de una computadora!</p>
+  <br>
+  <strong>Tu progreso de aprendizaje</strong>
+  <div class="progreso">
+    <div class="barra" id="barra"></div>
+  </div>
+  <p id="porcentaje">0% completado</p>
+</header>
+
+<main class="contenido">
+
+<section id="inicio">
+  <h2 class="titulo">📚 Partes de la computadora</h2>
+  <p style="margin-bottom:15px;color:#64748b">
+    Selecciona una parte para conocer su función.
+  </p>
+
+  <div class="grid" id="lista"></div>
+
+  <div id="detalle">
+    <div class="emoji" id="emojiDetalle"></div>
+    <h2 id="nombreDetalle"></h2>
+    <p id="descripcionDetalle"></p>
+    <button onclick="cerrarDetalle()">Volver a las partes</button>
+  </div>
+</section>
+
+<section id="quiz">
+  <h2>🧠 Prueba tus conocimientos</h2>
+  <br>
+  <h3 id="pregunta"></h3>
+  <div id="opciones"></div>
+  <p id="resultado" style="margin-top:15px"></p>
+  <button onclick="siguientePregunta()">Siguiente pregunta</button>
+  <p id="puntos" style="margin-top:15px">
+    ⭐ Puntos: 0
+  </p>
+</section>
+
+</main>
+
+<nav>
+  <button onclick="mostrarInicio()">🏠 Inicio</button>
+  <button onclick="mostrarPartes()">💻 Partes</button>
+  <button onclick="mostrarQuiz()">🧠 Quiz</button>
+</nav>
+
+</div>
+
+<script>
+
+const partes = [
+ {
+  nombre:"Monitor",
+  emoji:"🖥️",
+  descripcion:"Es la pantalla de la computadora. Sirve para mostrar imágenes, videos, textos y toda la información que procesa el equipo."
+ },
+ {
+  nombre:"Teclado",
+  emoji:"⌨️",
+  descripcion:"Es un dispositivo de entrada que permite escribir letras, números y comandos en la computadora."
+ },
+ {
+  nombre:"Mouse",
+  emoji:"🖱️",
+  descripcion:"Permite mover el cursor, seleccionar elementos, abrir programas y realizar diferentes acciones."
+ },
+ {
+  nombre:"CPU",
+  emoji:"🧠",
+  descripcion:"La unidad central de procesamiento ejecuta instrucciones y procesa los datos de la computadora."
+ },
+ {
+  nombre:"Memoria RAM",
+  emoji:"💾",
+  descripcion:"Almacena temporalmente los datos y programas que se están utilizando. Su contenido se pierde al apagar el equipo."
+ },
+ {
+  nombre:"Disco duro",
+  emoji:"💽",
+  descripcion:"Sirve para guardar archivos, documentos, imágenes, programas y el sistema operativo."
+ },
+ {
+  nombre:"Placa madre",
+  emoji:"🔌",
+  descripcion:"Es la tarjeta principal donde se conectan y comunican los diferentes componentes de la computadora."
+ },
+ {
+  nombre:"Fuente de poder",
+  emoji:"🔋",
+  descripcion:"Transforma y distribuye la energía eléctrica necesaria para que funcionen los componentes."
+ },
+ {
+  nombre:"Tarjeta gráfica",
+  emoji:"🎮",
+  descripcion:"Procesa y genera los gráficos que aparecen en el monitor. Es muy importante para videojuegos y diseño."
+ },
+ {
+  nombre:"Ventilador",
+  emoji:"🌀",
+  descripcion:"Ayuda a mantener una temperatura adecuada y evita que los componentes se sobrecalienten."
+ }
+];
+
+let aprendidas = [];
+let puntos = 0;
+let preguntaActual = 0;
+
+const preguntas = [
+ {
+  p:"¿Qué componente permite escribir textos?",
+  o:["Mouse","Teclado","Monitor"],
+  r:"Teclado"
+ },
+ {
+  p:"¿Qué componente muestra imágenes?",
+  o:["Monitor","RAM","Fuente de poder"],
+  r:"Monitor"
+ },
+ {
+  p:"¿Qué memoria almacena datos temporalmente?",
+  o:["Disco duro","RAM","Mouse"],
+  r:"RAM"
+ },
+ {
+  p:"¿Qué componente procesa las instrucciones?",
+  o:["CPU","Teclado","Monitor"],
+  r:"CPU"
+ },
+ {
+  p:"¿Dónde se conectan los componentes?",
+  o:["Placa madre","Mouse","Ventilador"],
+  r:"Placa madre"
+ }
+];
+
+function cargarPartes(){
+ const lista = document.getElementById("lista");
+
+ partes.forEach((parte,i)=>{
+  lista.innerHTML += `
+   <div class="tarjeta" onclick="verParte(${i})">
+    <div class="emoji">${parte.emoji}</div>
+    <h3>${parte.nombre}</h3>
+    <p>Ver información →</p>
+   </div>
+  `;
+ });
+}
+
+function verParte(i){
+ const parte = partes[i];
+
+ document.getElementById("detalle").style.display="block";
+ document.getElementById("emojiDetalle").textContent=parte.emoji;
+ document.getElementById("nombreDetalle").textContent=parte.nombre;
+ document.getElementById("descripcionDetalle").textContent=parte.descripcion;
+
+ if(!aprendidas.includes(i)){
+  aprendidas.push(i);
+  actualizarProgreso();
+ }
+}
+
+function cerrarDetalle(){
+ document.getElementById("detalle").style.display="none";
+}
+
+function actualizarProgreso(){
+ const porcentaje=Math.round((aprendidas.length/partes.length)*100);
+ document.getElementById("barra").style.width=porcentaje+"%";
+ document.getElementById("porcentaje").textContent=porcentaje+"% completado";
+}
+
+function mostrarInicio(){
+ document.getElementById("inicio").style.display="block";
+ document.getElementById("quiz").style.display="none";
+ cerrarDetalle();
+}
+
+function mostrarPartes(){
+ mostrarInicio();
+ document.getElementById("lista").scrollIntoView();
+}
+
+function mostrarQuiz(){
+ document.getElementById("inicio").style.display="none";
+ document.getElementById("quiz").style.display="block";
+ cargarPregunta();
+}
+
+function cargarPregunta(){
+ if(preguntaActual>=preguntas.length){
+  document.getElementById("pregunta").textContent="🎉 ¡Terminaste el cuestionario!";
+  document.getElementById("opciones").innerHTML="";
+  document.getElementById("resultado").textContent="Tu puntuación final es: "+puntos+" puntos.";
+  return;
+ }
+
+ const q=preguntas[preguntaActual];
+ document.getElementById("pregunta").textContent=q.p;
+
+ document.getElementById("resultado").textContent="";
+ document.getElementById("opciones").innerHTML="";
+
+ q.o.forEach(op=>{
+  const boton=document.createElement("button");
+  boton.textContent=op;
+  boton.className="opcion";
+  boton.onclick=()=>comprobar(op);
+  document.getElementById("opciones").appendChild(boton);
+ });
+
+ document.getElementById("puntos").textContent="⭐ Puntos: "+puntos;
+}
+
+function comprobar(respuesta){
+ const correcta=preguntas[preguntaActual].r;
+ const botones=document.querySelectorAll(".opcion");
+
+ botones.forEach(b=>b.disabled=true);
+
+ if(respuesta===correcta){
+  puntos+=10;
+  document.getElementById("resultado").textContent="✅ ¡Correcto! Ganaste 10 puntos.";
+ }else{
+  document.getElementById("resultado").textContent="❌ Incorrecto. La respuesta correcta es: "+correcta;
+ }
+
+ document.getElementById("puntos").textContent="⭐ Puntos: "+puntos;
+}
+
+function siguientePregunta(){
+ preguntaActual++;
+ cargarPregunta();
+}
+
+cargarPartes();
+
+</script>
+</body>
+</html>
